@@ -30,6 +30,9 @@
 class HelloWorld : public cocos2d::Scene
 {
 public:
+
+	void HelloWorld::update(float delta);
+
     static cocos2d::Scene* createScene();
 
     virtual bool init();
@@ -39,6 +42,9 @@ public:
     
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
+
+private:
+	std::map<cocos2d::EventKeyboard::KeyCode, bool> keys;
 };
 
 #endif // __HELLOWORLD_SCENE_H__
