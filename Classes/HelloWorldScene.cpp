@@ -23,7 +23,7 @@
  ****************************************************************************/
 
 #include "HelloWorldScene.h"
-#include "startScene.h"
+#include "SimpleAudioEngine.h"
 
 USING_NS_CC;
 
@@ -48,8 +48,6 @@ bool HelloWorld::init()
     {
         return false;
     }
-
-
 
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -88,7 +86,7 @@ bool HelloWorld::init()
     // add a label shows "Hello World"
     // create and initialize a label
 
-    auto label = Label::createWithTTF("START GAME", "fonts/Marker Felt.ttf", 24);
+    auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
     if (label == nullptr)
     {
         problemLoading("'fonts/Marker Felt.ttf'");
@@ -103,11 +101,11 @@ bool HelloWorld::init()
         this->addChild(label, 1);
     }
 
-    // add "soulknight" splash screen"
-    auto sprite = Sprite::create("firstscene.jpeg");
+    // add "HelloWorld" splash screen"
+    auto sprite = Sprite::create("HelloWorld.png");
     if (sprite == nullptr)
     {
-        problemLoading("'firstscene.jpeg");
+        problemLoading("'HelloWorld.png'");
     }
     else
     {
@@ -117,67 +115,7 @@ bool HelloWorld::init()
         // add the sprite as a child to this layer
         this->addChild(sprite, 0);
     }
-
-	auto knight1 = Sprite::create("knight1.png");
-
-	knight1->setPosition(Vec2(0, 0));
-
-	knight1->setTag(2);
-
-	this->addChild(knight1, 2);
-
-	//进入游戏按钮
-	EventListenerTouchOneByOne* listener = EventListenerTouchOneByOne::create();
-	listener-> onTouchBegan = [label](Touch* t, Event* e)
-	{
-		if (label->getBoundingBox().containsPoint(t->getLocation()))
-		{
-			Director::getInstance()->replaceScene(startScene::createScene());
-		}
-		return false;
-	};
-	Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, label);
-	
-	
-
-	//移动
-	auto knightListener = EventListenerKeyboard::create();
-
-	knightListener->onKeyPressed = [=](EventKeyboard::KeyCode code, Event* e)
-	{
-		log("key code : %d  , code");
-		keys[code] = true;
-		if (keys[EventKeyboard::KeyCode::KEY_W])
-		{
-			auto UP = MoveTo::create(0.3, Vec2(knight1->getPositionX() - 0, knight1->getPositionY() +5));
-			knight1->runAction(UP);
-		}
-		if (keys[EventKeyboard::KeyCode::KEY_S])
-		{
-			auto DOWN = MoveTo::create(0.3, Vec2(knight1->getPositionX() - 0, knight1->getPositionY() - 5));
-			knight1->runAction(DOWN);
-		}
-		if (keys[EventKeyboard::KeyCode::KEY_A])
-		{
-			auto LEFT = MoveTo::create(0.3, Vec2(knight1->getPositionX() - 5, knight1->getPositionY() + 0));
-			knight1->runAction(LEFT);
-		}
-		if (keys[EventKeyboard::KeyCode::KEY_D])
-		{
-			auto RIGHT = MoveTo::create(0.3, Vec2(knight1->getPositionX() + 5, knight1->getPositionY() + 0));
-			knight1->runAction(RIGHT);
-		}
-	};
-
-	knightListener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event* event)
-	{
-		keys[keyCode] = false;
-	};
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(knightListener, this);
-
-	this->scheduleUpdate();
-
-	return true;
+    return true;
 }
 
 
@@ -193,32 +131,3 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 
 
 }
-
-
-void HelloWorld::update(float delta)
-{
-	int offsetX = 0, offsetY = 0;
-	if (keys[EventKeyboard::KeyCode::KEY_A])
-	{
-		offsetX = -5;
-	}
-	if (keys[EventKeyboard::KeyCode::KEY_D])
-	{
-		offsetX = 5;
-	}
-	if (keys[EventKeyboard::KeyCode::KEY_W])
-	{
-		offsetY = 5;
-	}
-	if (keys[EventKeyboard::KeyCode::KEY_S])
-	{
-		offsetY = -5;
-	}
-	Node* hero = this->getChildByTag(2);
-
-	auto moveTo = MoveTo::create(0.3, Vec2(hero->getPositionX() + offsetX, hero->getPositionY() + offsetY));
-	hero->runAction(moveTo);
-}
-
-
-
