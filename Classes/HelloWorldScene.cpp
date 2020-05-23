@@ -23,7 +23,7 @@
  ****************************************************************************/
 
 #include "HelloWorldScene.h"
-#include "SimpleAudioEngine.h"
+#include "startScene.h"
 
 USING_NS_CC;
 
@@ -48,6 +48,8 @@ bool HelloWorld::init()
     {
         return false;
     }
+
+
 
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -86,7 +88,8 @@ bool HelloWorld::init()
     // add a label shows "Hello World"
     // create and initialize a label
 
-    auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
+    auto label = Label::createWithTTF("next stage", "fonts/Marker Felt.ttf", 24);
+	label->setTag(1);
     if (label == nullptr)
     {
         problemLoading("'fonts/Marker Felt.ttf'");
@@ -101,11 +104,11 @@ bool HelloWorld::init()
         this->addChild(label, 1);
     }
 
-    // add "HelloWorld" splash screen"
-    auto sprite = Sprite::create("HelloWorld.png");
+    // add "soulknight" splash screen"
+    /*auto sprite = Sprite::create("firstscene.jpeg");
     if (sprite == nullptr)
     {
-        problemLoading("'HelloWorld.png'");
+        problemLoading("'firstscene.jpeg");
     }
     else
     {
@@ -114,8 +117,113 @@ bool HelloWorld::init()
 
         // add the sprite as a child to this layer
         this->addChild(sprite, 0);
-    }
-    return true;
+    }*/
+
+	auto knight1 = Sprite::create("knight1.png");
+
+	knight1->setPosition(Vec2(640, 480));
+
+	knight1->setTag(2);
+
+	this->addChild(knight1, 2);
+
+	//进入游戏按钮
+	EventListenerTouchOneByOne* listener = EventListenerTouchOneByOne::create();
+	listener-> onTouchBegan = [label](Touch* t, Event* e)
+	{
+		if (label->getBoundingBox().containsPoint(t->getLocation()))
+		{
+			Director::getInstance()->replaceScene(startScene::createScene());
+		}
+		return false;
+	};
+	Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, label);
+	
+	
+
+	//移动
+	auto knightListener = EventListenerKeyboard::create();
+
+	knightListener->onKeyPressed = [=](EventKeyboard::KeyCode code, Event* e)
+	{
+		log("key code : %d  , code");
+		keys[code] = true;
+		/*if (keys[EventKeyboard::KeyCode::KEY_W])
+		{
+			auto UP = MoveTo::create(0.3, Vec2(knight1->getPositionX() - 0, knight1->getPositionY() +5));
+			knight1->runAction(UP);
+		}
+		if (keys[EventKeyboard::KeyCode::KEY_S])
+		{
+			auto DOWN = MoveTo::create(0.3, Vec2(knight1->getPositionX() - 0, knight1->getPositionY() - 5));
+			knight1->runAction(DOWN);
+		}
+		if (keys[EventKeyboard::KeyCode::KEY_A])
+		{
+			auto LEFT = MoveTo::create(0.3, Vec2(knight1->getPositionX() - 5, knight1->getPositionY() + 0));
+			knight1->runAction(LEFT);
+		}
+		if (keys[EventKeyboard::KeyCode::KEY_D])
+		{
+			auto RIGHT = MoveTo::create(0.3, Vec2(knight1->getPositionX() + 5, knight1->getPositionY() + 0));
+			knight1->runAction(RIGHT);
+		}*/
+	};
+
+	knightListener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event* event)
+	{
+		keys[keyCode] = false;
+	};
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(knightListener, this);
+
+	this->scheduleUpdate();
+
+	TMXTiledMap* tmx = TMXTiledMap::create("map.tmx");//地图
+	tmx->setTag(3);
+	//改变位置
+	/*tmx->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	CCLOG("%f,%f", visibleSize.width / 2, visibleSize.height / 2);
+	tmx->setAnchorPoint(Vec2(0.5, 0.5));
+	tmx->setScale(Director::getInstance()->getContentScaleFactor());*/
+	//获取地图属性
+	addChild(tmx, 0);
+	//改变地图大小，参数为倍数
+	//tmx->setScale(0.5);
+	auto mapProperties = tmx->getProperties();
+	auto str = mapProperties["type"].asString();
+	CCLOG("tmx pro:%s", str.c_str());
+	//获取图层属性
+	auto sceneLayer = tmx->getLayer("scene");
+	auto layerProperties = sceneLayer->getProperties();
+	CCLOG("layer pro:%s", layerProperties["type"].asString().c_str());
+	//获取图块属性
+	auto tilePro = tmx->getPropertiesForGID(1).asValueMap();
+	CCLOG("tile pro:%s", tilePro["type"].asString().c_str());
+	//获取对象属性
+	auto objectGroup = tmx->getObjectGroup("object");
+	auto obj = objectGroup->getObject("player");
+
+	CCLOG("tile pro:%s", obj["type"].asString().c_str());
+
+	//修改指定区域的颜色
+	/*auto colorObj = objectGroup->getObject("color");
+	auto colorObjX = colorObj["x"].asInt() / 32;
+	auto colorObjY = colorObj["y"].asInt() / 32;
+	auto colorObjW = colorObj["width"].asInt() / 32;
+	auto colorObjH = colorObj["height"].asInt() / 32;
+	for (int x = colorObjX; x < colorObjX + colorObjW; x++) {
+		for (int y = colorObjY; y < colorObjY + colorObjH; y++) {
+			auto sprite = sceneLayer->getTileAt(Vec2(x, tmx->getMapSize().height-y));
+			sprite->setColor(Color3B(225, 0, 0));
+		}
+	}*/
+
+
+
+
+
+
+	return true;
 }
 
 
@@ -131,3 +239,45 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 
 
 }
+
+
+void HelloWorld::update(float delta)
+{
+
+	//视角跟随
+	
+
+	int offsetX = 0, offsetY = 0;
+	if (keys[EventKeyboard::KeyCode::KEY_D])
+	{
+		offsetX = -5;
+	}
+	if (keys[EventKeyboard::KeyCode::KEY_A])
+	{
+		offsetX = 5;
+	}
+	if (keys[EventKeyboard::KeyCode::KEY_S])
+	{
+		offsetY = 5;
+	}
+	if (keys[EventKeyboard::KeyCode::KEY_W])
+	{
+		offsetY = -5;
+	}
+	Node* map = this->getChildByTag(3);
+
+	auto moveTo = MoveTo::create(0.3, Vec2(map->getPositionX() + offsetX, map->getPositionY() + offsetY));
+	map->runAction(moveTo);
+
+	//
+	Node* door = this->getChildByTag(1);
+
+	if (door->getBoundingBox().containsPoint(Vec2(640, 480)))
+	{
+		Director::getInstance()->replaceScene(startScene::createScene());
+	}
+
+}
+
+
+
