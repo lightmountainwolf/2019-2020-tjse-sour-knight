@@ -7,12 +7,32 @@
    <property name="type" value="我是图块属性"/>
   </properties>
  </tile>
+ <tile id="2">
+  <properties>
+   <property name="move" value="false"/>
+  </properties>
+ </tile>
+ <tile id="3">
+  <properties>
+   <property name="move" value="true"/>
+  </properties>
+ </tile>
  <tile id="4">
   <properties>
    <property name="move" value="true"/>
   </properties>
  </tile>
  <tile id="5">
+  <properties>
+   <property name="move" value="false"/>
+  </properties>
+ </tile>
+ <tile id="6">
+  <properties>
+   <property name="move" value="false"/>
+  </properties>
+ </tile>
+ <tile id="7">
   <properties>
    <property name="move" value="false"/>
   </properties>

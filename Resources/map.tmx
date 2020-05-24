@@ -77,7 +77,7 @@
    <ellipse/>
   </object>
  </objectgroup>
- <layer id="2" name="图块层 2" width="25" height="25" visible="0">
+ <layer id="2" name="图块层 2" width="25" height="25">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
