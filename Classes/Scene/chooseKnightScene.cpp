@@ -58,17 +58,12 @@ void chooseKnightScene::goMenu(Ref *pSender)
 // /
 	//添加人物与武器
 	auto weapon = Weapon::create("Weapons/weaponGun.png", 3, 1, REMOTE, NORMAL);
-	auto knight = Knight::create("Heroes/knight.png", weapon);
+	auto knight = Knight::create("Heroes/knight1.1.png", weapon);
 	knight->setPosition(Vec2(640, 480));
 	knight->setTag(TAG_OF_KNIGHT);
 	log("%f", knight->getPosition().x);
 	log("%f", knight->getPosition().y);
-	//weapon->setAnchorPoint(Vec2(0, 1.5));
-	/*Vec2 p;
-	p.x = knight->getPosition().x ;
-	p.y = knight->getPosition().y;
-	weapon->setPosition(p);*/
-	/*weapon->setPosition(Vec2(670, 455));*/
+
 	weapon->setPosition(Vec2(640, 455));
 	
 	weapon->setTag(TAG_OF_KNIGHT_INITIAL_WEAPON);

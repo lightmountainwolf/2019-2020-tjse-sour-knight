@@ -97,6 +97,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	//初始化背景音乐
 	SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sound/SafeMapBGM.mp3");
 	SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sound/FightMapBGM.mp3");
+	SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sound/FightMapCaveBGM.mp3");
 	//初始化音效
 	SimpleAudioEngine::getInstance()->preloadEffect("sound/ClickSound.mp3");
 

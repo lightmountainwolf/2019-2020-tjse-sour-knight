@@ -7,6 +7,7 @@
 #include"Settings/SoundAndMusic.h"
 #include"Settings/pauseControl.h"
 #include"Settings/CreateDoor.h"
+#include"Function/CommonFunction.h"
 
 
 Scene* firstStage::createScene()
@@ -70,10 +71,11 @@ bool firstStage::init()
 
 	//获取地图属性
 	addChild(map, 0);
-	
-	auto door=setDoor(1600, 636, 200);
-	this->addChild(door);
 
+	//放置传送门
+	auto door = setDoor(1600, 636, 200);
+	this->addChild(door);
+	
 	TMXObjectGroup* group = map->getObjectGroup("obj");
 
 	ValueMap spawnPoint = group->getObject("player");
@@ -136,32 +138,6 @@ void firstStage::onEnter()//注册监听器，设置音乐
 		keys[keyCode] = false;
 	};
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(knightMoveListener, this);
-
-/////////////////////////////以下为碰撞监听器/////////////////////////////////////////
-	auto listener = EventListenerPhysicsContact::create();
-	listener->onContactBegin = [](PhysicsContact& contact)
-	{	
-		return true;
-	};
-	listener->onContactPreSolve = [](PhysicsContact& contact, PhysicsContactPreSolve& solve)
-	{
-		
-		return true;
-	};
-	listener->onContactPostSolve = [](PhysicsContact& contact, const PhysicsContactPostSolve& solve)
-	{
-		
-	};
-
-	listener->onContactSeparate = [](PhysicsContact& contact)
-	{
-		auto spriteA = (Sprite*)contact.getShapeA()->getBody()->getNode();
-		auto spriteB = (Sprite*)contact.getShapeB()->getBody()->getNode();
-
-		spriteA->runAction(CCBlink::create(3.0f, 10));
-		spriteB->runAction(CCBlink::create(3.0f, 10));
-	};
-	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
 
 		playMusic("sound/SafeMapBGM.mp3", true);	
 }
@@ -233,8 +209,6 @@ bool firstStage::onTouchBegan(Touch* touch, Event* event)//鼠标点击，骑士攻击
 {
 	if (this->getKnightBeenSelected() && this->getKnight()->getMP())
 	{
-		/*auto weapon = getChildByTag(TAG_OF_KNIGHT_INITIAL_WEAPON);
-		Vec2 p = weapon->getPosition();*/
 		Vec2 p = this->getWeapon()->getPosition();
 		auto bullet = Bullet::create("Bullets/bullet1.png", 3, NORMAL);
 /// ///////////设置碰撞属性
@@ -251,10 +225,7 @@ bool firstStage::onTouchBegan(Touch* touch, Event* event)//鼠标点击，骑士攻击
 			float y = 250 * sin(tempAngle);
 			bullet->runAction(Sequence::create(MoveBy::create(0.3f, Vec2(x, y)), CallFunc::create(CC_CALLBACK_0(Sprite::removeFromParent, bullet)), NULL));
 			updateInformationMP(this ,this->getKnight());
-			log("///////////////////////////////////////");
-			log("%d", this->getKnight()->getPosition().x);
-			log("%d",this->getKnight()->getPosition().y);
-			log("///////////////////////////////////////");
+			
 
 		return false;
 	}
@@ -346,20 +317,58 @@ void firstStage::setPlayerPosition(Point position)
 				return;
 
 			}
-			if (pass == "true") {
-				auto scene = HelloWorldF::createScene();
-				Director::getInstance()->replaceScene(scene);
+			if (pass == "true") 
+			{
+				auto scene = Level01::createScene();
+				////预处理
+				scene->removeChildByTag(TAG_OF_LEVEL_01);
+				//
+
+			  auto stage = Level01::create();
+
+			    auto knight=Knight::create("Heroes/knight1.1.png",this->getKnight());
+				auto weapon =Weapon::create("Weapons/weaponGun.png",this->getWeapon());
+
+				knight->setPosition(Vec2(640, 480));
+				weapon->setPosition(Vec2(640, 455));
+
+				knight->setTag(TAG_OF_KNIGHT);
+				weapon->setTag(TAG_OF_KNIGHT_INITIAL_WEAPON);
+				//stage->setTag(TAG_OF_LEVEL_01);
+
+				//设置碰撞性质
+				auto heroBody = PhysicsBody::createBox(knight->getContentSize());
+				heroBody->setCategoryBitmask(MY_HERO_1);
+				heroBody->setCollisionBitmask(MY_HERO_2);
+				knight->setPhysicsBody(heroBody);
+
+				auto weaponBody = PhysicsBody::createBox(weapon->getContentSize());
+				weaponBody->setCategoryBitmask(WEAPON_1);
+				weaponBody->setCollisionBitmask(WEAPON_2);
+				weapon->setPhysicsBody(weaponBody);
+				////角色的添加
+				stage->addChild(knight);
+				stage->addChild(weapon);
+		        stage->setKnight(knight);
+				stage->setWeapon(weapon);
+				if (this->getKnightBeenSelected())
+				{
+					stage->setKnightBeenSelected(true);
+				}
+				scene->addChild(stage, 0);
+
+				//////////创建InformationBox
+				createInformationBox(stage, knight);
+
+
+				
+				auto reScene = TransitionProgressOutIn::create(0.5f, scene);
+				Director::getInstance()->replaceScene(reScene);
 
 				//CCLOG("aaaaaaaaaaaaaaa");
 			}
 
 		}
-		/*int deltax = (_weapon->getPosition().x) - (_knight->getPosition().x);
-		int deltay = (_weapon->getPosition().y) - (_knight->getPosition().y);
-
-		this->getKnight()->setPosition(position);
-		Vec2 pos =Vec2(_knight->getPosition().x + deltax, _knight->getPosition().y + deltay);
-		this->getWeapon()->setPosition(pos);*/
 		this->getKnight()->setPosition(position);
 		Point pos = Point(position.x , position.y - 25);
 		this->getWeapon()->setPosition(pos);
@@ -374,10 +383,9 @@ Point firstStage::transPoision(Point pos)
 	if (this->getKnightBeenSelected())
 	{
 		int x = 0.5 * pos.x / map->getTileSize().width;
-
 		int y = ((map->getMapSize().height * map->getTileSize().height) - 0.5 * pos.y) /
 
-			map->getTileSize().height;
+		map->getTileSize().height;
 
 		return Point(x, y);
 	}

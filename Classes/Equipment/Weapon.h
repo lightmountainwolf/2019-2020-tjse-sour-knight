@@ -21,6 +21,8 @@ class Weapon :public Sprite
 public:
 	virtual bool init(const std::string& filename, int attack, int mpconsuming, EAttackMode attackmode, EDebuffType debufftype);
 	static Weapon* create(const std::string& filename, int attack, int mpconsuming, EAttackMode attackmode, EDebuffType debufftype);
+	static Weapon* create(const std::string& filename, Weapon* wep);
+	virtual bool init(const std::string& filename, Weapon* wep);
 };
 
 

@@ -7,7 +7,7 @@
 #include "Settings/StartSetting.h"
 #include "Settings/SoundAndMusic.h"
 #include "Scene/firstStage.h"
-#include"Scene/HelloWorldScene.h"
+
 
 
 class Start2 : public cocos2d::Scene

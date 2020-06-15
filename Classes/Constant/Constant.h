@@ -4,6 +4,12 @@
 
 #include"cocos2d.h"
 
+//小怪tag
+#define MONSTER_1 55
+#define MONSTER_2 56
+#define MONSTER_3 57
+#define MONSTER_4 58
+#define MONSTER_5 59
 //数学相关
 #define PI 3.14159
 
@@ -12,8 +18,8 @@
 #define WEAPON_2 0x00
 #define MY_HERO_1 0x02
 #define MY_HERO_2 0x01
-#define ENEMY_1   0x08
-#define ENEMY_2   0x04
+#define ENEMY_1   0x01
+#define ENEMY_2   0x03
 #define MY_BULLET_1 0x04
 #define MY_BULLET_2 0x08
 #define ENEMY_BULLET_1 0x01
@@ -57,10 +63,14 @@ enum EAttackMode
 
 //Tag部分
 
-//场景部分（安全地图与关卡）1~49
+//场景部分（安全地图与关卡）1~34
 #define TAG_OF_FIRST_STAGE_LAYER 1
 #define TAG_OF_FIRST_STAGE_SCENE 2
+#define TAG_OF_LEVEL_01 3
 
+
+//人物贴图部分
+#define SIZE_OF_HERO 35
 
 //人物部分（英雄角色与敌人） 50~200
 #define TAG_OF_KNIGHT 50
@@ -86,6 +96,8 @@ enum EAttackMode
 //武器部分 300~349
 
 #define TAG_OF_KNIGHT_INITIAL_WEAPON 300
+
+
 
 
 

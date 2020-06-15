@@ -28,3 +28,32 @@ Weapon* Weapon::create(const std::string& filename, int attack, int mpconsuming,
 		return nullptr;
 	}
 }
+
+ Weapon* Weapon::create(const std::string& filename, Weapon* wep)
+ {
+	 Weapon* weapon = new Weapon();
+	 if (weapon&&weapon->init( filename, wep))
+	 {
+		 weapon->autorelease();
+		 return weapon;
+	 }
+	 else
+	 {
+		 CC_SAFE_DELETE(weapon);
+		 return nullptr;
+	 }
+ }
+
+ bool Weapon::init(const std::string& filename,Weapon* weapon)
+ {
+	 if (!Sprite::initWithFile(filename))
+		 return false;
+	 else
+	 {
+		 this->setAttack(weapon->getAttack());
+		 this->setDebuffType(weapon->getDebuffType());
+		 this->setAttackMode(weapon->getAttackMode());
+		 this->setMPConsuming(weapon->getMPConsuming());
+		 return true;
+	 }
+ }

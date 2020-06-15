@@ -11,7 +11,7 @@
 #include"Equipment/Bullet.h"
 #include"SimpleAudioEngine.h"
 #include"Equipment/Weapon.h"
-#include"Scene/HelloWorldSceneF.h"
+#include"Scene/Level01.h"
 
 using namespace CocosDenshion;
 USING_NS_CC;

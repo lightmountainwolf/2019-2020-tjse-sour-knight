@@ -18,6 +18,7 @@ bool Creep::init(const std::string& filename,
 		setAttackRadius(attackmode);
 		return true;
 	}
+	//this->scheduleUpdate();
  }
 
 
@@ -41,4 +42,14 @@ Creep* Creep::create(const std::string& filename,
 	}
  }
 
-
+//Ëæ»úÒÆ¶¯
+/*void Creep::update(float delta)
+{
+	Vec2 p = this->getPosition();
+	/// ///////////////
+	float tempAngle = CCRANDOM_0_1() * 2 * PI;
+	float x = 250 * cos(tempAngle);
+	float y = 250 * sin(tempAngle);
+	auto move = MoveBy::create(20.0f, Vec2(x, y));
+	this->runAction(move);
+}*/

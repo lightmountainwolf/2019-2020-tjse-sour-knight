@@ -22,6 +22,8 @@ public:
 		                 const EAttackMode attackmode,
 		                 const int HP,
 		                 const int attack);
+	//void randomMove();
+	//void update(float delta);
 };
 
 
