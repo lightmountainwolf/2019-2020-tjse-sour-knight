@@ -128,7 +128,7 @@ bool Level01::init()
 	allClear = false;
 // ////////////////////////////////////////////////////////////////////
 	this->schedule(schedule_selector(Level01::enemyAttackUpdate), 1.0f, kRepeatForever, 0);//敌人的攻击
-	this->schedule(schedule_selector(Level01::enemyMoveUpdate), 1, -1, 2);//敌人的移动
+	this->schedule(schedule_selector(Level01::enemyMoveUpdate), 1, -1, 1);//敌人的移动
 	this->schedule(schedule_selector(Level01::armorRecoverUpdate), 2.0f, kRepeatForever, 0);//护甲的恢复
 	this->schedule(schedule_selector(Level01::heroDieUpdate), 3.0f, kRepeatForever, 2.0f);
 	this->scheduleUpdate();
@@ -163,13 +163,18 @@ void Level01::createMonster(char arr[5][4], const std::string& location, int num
 			monsterTemp = Creep::create(location, NORMAL, ENEMY_REMOTE, CREEP_HP_1, MONSTER_ATTACK_LOW, false);
 
 
-		auto body = PhysicsBody::createBox(monsterTemp->getContentSize());
 		
+			auto body = PhysicsBody::createBox(monsterTemp->getContentSize());
+
 			body->setCategoryBitmask(ENEMY_1);
 			body->setCollisionBitmask(0);
 			body->setContactTestBitmask(ENEMY_2);
+
+			monsterTemp->setPhysicsBody(body);
 		
-		monsterTemp->setPhysicsBody(body);
+		
+		
+		
 		
 
 		monsterTemp->setPosition(x, y);
@@ -242,11 +247,13 @@ void Level01::creepDie(Creep* creep)
 	{
 		if (littleMapClear[i] >= 5)
 		{
+			littleMapClear[i] = 0;
 			for (int j = 15 + i * 5; j < 20 + i * 5; j++)
 			{
 				Creep* monster = creepsVec.at(j);
 				monster->active = true;
 				monster->setVisible(true);
+				;
 
 			}
 			if (littleMapWave[i] == 0)
@@ -293,7 +300,7 @@ void Level01::onEnter()//注册监听器，设置音乐
 		auto monster = static_cast<Creep*>(contact.getShapeB()->getBody()->getNode());
 		if (bullet && bullet->getTag() == TAG_OF_BULLET_01 && monster &&( monster->getTag()>=TAG_OF_MONSTER_1)&&(monster->getTag()<= MAX_TAG_OF_MONSTER))
 		{
-			if (!monster->getAlreadyDead())
+			if (!monster->getAlreadyDead()&&monster->active==true)
 			{
 				monster->setColor(Color3B::RED);
 				monster->takeDamage(bullet);
@@ -528,6 +535,11 @@ void Level01::heroDieUpdate(float delta)
 
 void Level01::enemyAttackUpdate(float delta)
 {
+	int tileGid;
+	float relativeX, relativeY, relativeR, searchX, searchY;
+	float cosAlpha, sinAlpha;//角度
+	bool hit;
+	hit = false;
 	Vec2 hero;
 	if ((this->getKnightBeenSelected()) && (!this->getKnight()->getAlreadyDead()))
 	{
@@ -542,6 +554,40 @@ void Level01::enemyAttackUpdate(float delta)
 					if ((enemy.x >= hero.x - ENEMY_REMOTE) && (enemy.x <= hero.x + ENEMY_REMOTE) &&
 						(enemy.y >= hero.y - ENEMY_REMOTE) && (enemy.y <= hero.y + ENEMY_REMOTE))
 					{
+						hit = false;
+						relativeX = hero.x - enemy.x;
+						relativeY = hero.y - enemy.y;
+						relativeR = sqrt(relativeX * relativeX + relativeY * relativeY);
+						cosAlpha = relativeX / relativeR;
+						sinAlpha = relativeY / relativeR;
+						searchX = enemy.x;
+						searchY = enemy.y;
+						while (relativeR > 0)
+						{
+							relativeR -= 20;
+							searchX += 20 * cosAlpha;
+							searchY += 20 * sinAlpha;
+							int xxx = 0.5 * searchX / map->getTileSize().width;
+							int yyy = ((map->getMapSize().height * map->getTileSize().height) - 0.5 * searchY) / map->getTileSize().height;
+
+							Point posAfter = Point(xxx, yyy);
+
+							tileGid = collidable->getTileGIDAt(posAfter);
+							if (tileGid > 0)
+							{
+								Value prop = map->getPropertiesForGID(tileGid);
+
+								ValueMap propValueMap = prop.asValueMap();
+
+								std::string collision = propValueMap["Collidable"].asString();
+
+								if (collision == "true")
+								{
+									hit = true;
+									break;
+								}
+							}
+						}
 						this->setInAttackRange(true);
 						//this->setBeenAttacked(true);
 						auto enemyBullet = Bullet::create("Bullets/bullet1.png", 3, NORMAL);
@@ -555,7 +601,7 @@ void Level01::enemyAttackUpdate(float delta)
 
 
 						enemyBullet->setPosition(enemy);
-						enemyBullet->runAction(Sequence::create(MoveTo::create(0.4f, hero), CallFunc::create(CC_CALLBACK_0(Sprite::removeFromParent, enemyBullet)), NULL));
+						enemyBullet->runAction(Sequence::create(MoveTo::create(0.4f, Vec2(searchX,searchY)), CallFunc::create(CC_CALLBACK_0(Sprite::removeFromParent, enemyBullet)), NULL));
 
 						//this->setBeenAttacked(false);
 						this->addChild(enemyBullet);
@@ -641,6 +687,11 @@ void Level01::attackRandomly(Bullet* bullet)//没有攻击目标时的随机攻�
 
 bool Level01::attackTawordsTarget(Bullet* bullet)
 {
+	int tileGid;
+	float relativeX, relativeY, relativeR, searchX, searchY;
+	float cosAlpha, sinAlpha;//角度
+	bool hit;
+	hit = false;
 	bool tag=false;
 	if (this->getKnightBeenSelected())
 	{
@@ -651,7 +702,42 @@ bool Level01::attackTawordsTarget(Bullet* bullet)
 			if (((!monster->getAlreadyDead()) && monster->active == true && (enemy.x >= hero.x - _knight->getAttackRadius()) && (enemy.x <= hero.x + _knight->getAttackRadius()))
 				&& ((enemy.y >= hero.y - _knight->getAttackRadius()) && (enemy.y <= hero.y + _knight->getAttackRadius())))
 			{
-				bullet->runAction(Sequence::create(MoveTo::create(0.3f, enemy), CallFunc::create(CC_CALLBACK_0(Sprite::removeFromParent, bullet)), NULL));
+				hit = false;
+				relativeX = hero.x - enemy.x;
+				relativeY = hero.y - enemy.y;
+				relativeR = sqrt(relativeX * relativeX + relativeY * relativeY);
+				cosAlpha = relativeX / relativeR;
+				sinAlpha = relativeY / relativeR;
+				searchX = hero.x;
+				searchY = hero.y;
+				while (relativeR > 0)
+				{
+
+					searchX -= 20 * cosAlpha;
+					searchY -= 20 * sinAlpha;
+					int xxx = 0.5 * searchX / map->getTileSize().width;
+					int yyy = ((map->getMapSize().height * map->getTileSize().height) - 0.5 * searchY) / map->getTileSize().height;
+
+					Point posAfter = Point(xxx, yyy);
+
+					tileGid = collidable->getTileGIDAt(posAfter);
+					if (tileGid > 0)
+					{
+						Value prop = map->getPropertiesForGID(tileGid);
+
+						ValueMap propValueMap = prop.asValueMap();
+
+						std::string collision = propValueMap["Collidable"].asString();
+
+						if (collision == "true")
+						{
+							hit = true;
+							break;
+						}
+					}
+					relativeR -= 20;
+				}
+				bullet->runAction(Sequence::create(MoveTo::create(0.3f, Vec2(searchX,searchY)), CallFunc::create(CC_CALLBACK_0(Sprite::removeFromParent, bullet)), NULL));
 				updateInformationMP(this, this->getKnight());
 				tag = true;
 				break;
@@ -670,11 +756,15 @@ void Level01::creepMove()
 {
 	int xx, yy, tileGid;
 	Point playerPos = this->getKnight()->getPosition();
+	float relativeX, relativeY,relativeR,searchX,searchY;
+	float cosAlpha,sinAlpha;//角度
+	bool hit;
 
 	for (const auto& sprite : this->creepsVec)
 	{
 		if (!sprite->getAlreadyDead()&&sprite->active==true)//如果这一个小怪没有死，就会随着英雄移动
 		{
+			
 			Point pos = sprite->getPosition();
 			if (!this->getKnight()->getAlreadyDead())
 			{
@@ -682,6 +772,45 @@ void Level01::creepMove()
 				{
 					if ((pos.y >= playerPos.y - ENEMY_REMOTE) && (pos.y <= playerPos.y + ENEMY_REMOTE))
 					{
+						hit = false;
+						relativeX = playerPos.x - pos.x;
+						relativeY = playerPos.y - pos.y;
+						relativeR = sqrt(relativeX * relativeX + relativeY * relativeY);
+						cosAlpha = relativeX / relativeR;
+						sinAlpha = relativeY / relativeR;
+						searchX = pos.x;
+						searchY = pos.y;
+						while (relativeR > 0)
+						{
+							
+							searchX += 20 * cosAlpha;
+							searchY += 20 * sinAlpha;
+							int xxx = 0.5 * searchX / map->getTileSize().width;
+							int yyy = ((map->getMapSize().height * map->getTileSize().height) - 0.5 * searchY) / map->getTileSize().height;
+
+							Point posAfter = Point(xxx, yyy);
+
+							tileGid = collidable->getTileGIDAt(posAfter);
+							if (tileGid > 0)
+							{
+								Value prop = map->getPropertiesForGID(tileGid);
+
+								ValueMap propValueMap = prop.asValueMap();
+
+								std::string collision = propValueMap["Collidable"].asString();
+
+								if (collision == "true")
+								{
+									hit = true;
+									break;
+								}
+							}
+							relativeR -= 20;
+						}
+						if (hit == true)
+						{
+							continue;
+						}
 						auto moveToKnight = MoveTo::create(1.0f, Vec2(playerPos.x, playerPos.y));
 						sprite->runAction(moveToKnight);
 						continue;

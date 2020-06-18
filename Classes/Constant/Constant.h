@@ -79,7 +79,7 @@ enum EAttackMode
 #define TAG_OF_MONSTER_4 58
 #define TAG_OF_MONSTER_5 59
 
-//目前排到了69
+//目前排到了
 #define MAX_TAG_OF_MONSTER 84
 
 
