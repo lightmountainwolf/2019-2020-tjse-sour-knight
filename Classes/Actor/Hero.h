@@ -14,7 +14,9 @@ class Hero :public Actor
 	CC_SYNTHESIZE(int, _armor, Armor);//护甲
 	CC_SYNTHESIZE(int, _MP, MP);//蓝条（能量）
 	CC_SYNTHESIZE(int, _MPConsuming, MPConsuming);//每一次攻击消耗的能量值
-
+	CC_SYNTHESIZE(int, _maxArmor, MaxArmor);//护甲最大值
+	CC_SYNTHESIZE(int, _maxMP, MaxMP);//MP最大值
+	
 
 public:
 	virtual bool init(const std::string& filename,
@@ -38,6 +40,11 @@ public:
 	);
 
 void consumeMP();
+
+virtual void takeDamage(Actor* actor);
+
+virtual void takeDamage(Bullet* bullet);
+
 };
 
 

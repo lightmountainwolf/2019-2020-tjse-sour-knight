@@ -12,8 +12,11 @@ bool  Hero::init(const std::string& filename,
 	else
 	{
 		setHP(HP);
+		setMaxHP(HP);
 		setArmor(armor);
+		setMaxArmor(armor);
 		setMP(MP);
+		setMaxMP(MP);
 		setAttack(attack);
 		setAttackRadius(attackradius);
 		setAttackMode(attackmode);
@@ -57,3 +60,43 @@ Hero* Hero::create(const std::string& filename,
 		this->setMP(0);
 	}
 }
+
+ void Hero::takeDamage(Actor* actor)
+ {
+	 _armor -= actor->getAttack();
+	 if (_armor < 0)
+	 {
+		 int hp = abs(this->getArmor());
+		 this->setArmor(0);
+		 _HP -= hp;
+		 if (_HP <= 0)
+		 {
+			 setHP(0);
+			 setAlreadyDead(true);
+			 setAttackRadius(0);
+		 }
+		 else
+			 setAlreadyDead(false);
+	 }
+ }
+
+ void Hero::takeDamage(Bullet* bullet)
+ {
+	 _armor -= bullet->getAttack();
+	 if (_armor < 0)
+	 {
+		 int hp = abs(this->getArmor());
+		 this->setArmor(0);
+		 _HP -= hp;
+		 if (_HP <= 0)
+		 {
+			 setHP(0);
+			 setAlreadyDead(true);
+			 setAttackRadius(0);
+		 }
+		 else
+			 setAlreadyDead(false);
+	 }
+ }
+
+ 

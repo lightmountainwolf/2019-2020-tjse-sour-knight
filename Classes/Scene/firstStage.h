@@ -12,6 +12,7 @@
 #include"SimpleAudioEngine.h"
 #include"Equipment/Weapon.h"
 #include"Scene/Level01.h"
+#include"Scene/DeadScene.h"
 
 using namespace CocosDenshion;
 USING_NS_CC;
@@ -42,10 +43,8 @@ public:
 	virtual void onExitTransitionDidStart();
 	virtual void cleanup();
 
-	//////////////////////////////////////////////////
-	void menuPauseCallback(cocos2d::Ref* pSender);
-	//////////////////////////////////////////////////
 
+	void menuPauseCallback(cocos2d::Ref* pSender);
 
 	bool chooseKnightTouchBegan(Touch* touch, Event* event);//选择英雄-骑士（开始）
 	void chooseKnightTouchEnded(Touch* touch, Event* event);//选择英雄-骑士（结束）
@@ -54,6 +53,7 @@ public:
 	bool onTouchBegan(Touch* touch, Event* event);
 	void removeFromParent( Node* m);
 	
+	void nextScene();
 // ///////////////////////////////////////////
 
 	void setPlayerPosition(cocos2d::Point position);
@@ -68,6 +68,7 @@ public:
 
 private:
 	std::map<cocos2d::EventKeyboard::KeyCode, bool> keys;
+	std::vector<cocos2d::EventListener*> listenerVec;
 };
 
 

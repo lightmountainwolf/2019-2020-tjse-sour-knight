@@ -13,9 +13,13 @@
          Armor:6
          MP:200
          */
+         setAlreadyDead(false);
          setHP(HP_OF_KNIGHT);
          setArmor(ARMOR_OF_KNIGHT);
          setMP(MP_OF_KNIGHT);
+         setMaxHP(HP_OF_KNIGHT);
+         setMaxArmor(ARMOR_OF_KNIGHT);
+         setMaxMP(MP_OF_KNIGHT);
          setAttackMode(weapon->getAttackMode());
          setAttackRadius(weapon->getAttackMode());
          setMPConsuming(weapon->getMPConsuming());
@@ -43,7 +47,9 @@
          Animation* moveAnimation = Animation::createWithSpriteFrames(vector, 0.3f);
          Animate* moveAnimate = Animate::create(moveAnimation);
 
+         
          knight->runAction(RepeatForever::create(moveAnimate));
+         
 // //////////////////////////////////////////////////////////////////////
          return knight;
      }
@@ -75,7 +81,9 @@
          Animation* moveAnimation = Animation::createWithSpriteFrames(vector, 0.3f);
          Animate* moveAnimate = Animate::create(moveAnimation);
 
+       
          knight->runAction(RepeatForever::create(moveAnimate));
+         
 // //////////////////////////////////////////////////////////////////////
          return knight;
      }
@@ -95,6 +103,7 @@
      {
          //Actor部分初始化
          this->setHP(knight->getHP());
+         this->setMaxHP(HP_OF_KNIGHT);
          this->setAttack(knight->getAttack());
          this->setAlreadyDead(knight->getAlreadyDead());
          this->setAttackRadius(knight->getAttackRadius());
@@ -102,14 +111,14 @@
          this->setReleaseDebuff(knight->getReleaseDebuff());
          //Hero 部分初始化
          this->setArmor(knight->getArmor());
+         this->setMaxArmor(ARMOR_OF_KNIGHT);
          this->setMP(knight->getMP());
+         this->setMaxMP(MP_OF_KNIGHT);
          this->setMPConsuming(knight->getMPConsuming());
          //Knight部分初始化
+
          return true;
      }
 
-
-
-
-
  }
+

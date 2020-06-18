@@ -38,7 +38,7 @@
 				<key>spriteTrimmed</key>
 				<false/>
 				<key>textureRect</key>
-				<string>{{0,83},{77,83}}</string>
+				<string>{{77,0},{77,83}}</string>
 				<key>textureRotated</key>
 				<false/>
 			</dict>
@@ -48,7 +48,7 @@
 			<key>format</key>
 			<integer>3</integer>
 			<key>size</key>
-			<string>{77,154}</string>
+			<string>{154,83}</string>
 			<key>target</key>
 			<dict>
 				<key>name</key>

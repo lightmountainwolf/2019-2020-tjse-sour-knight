@@ -167,11 +167,15 @@ void PauseSetting::menuSoundToggleCallback(cocos2d::Ref* pSender)
 	//log("soundToggleMenuItem %d", soundToggleMenuItem->getSelectedIndex());
 	if (soundCondition == true)
 	{
-		playSound("sound/ClickSound.mp3", 1);
+		musicCondition = false;
+		SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+		//playSound("sound/ClickSound.mp3", 1);
 	}
 	else
 	{
-		playSound("sound/ClickSound.mp3", 0);
+		musicCondition = true;
+		SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+		//playSound("sound/ClickSound.mp3", 0);
 	}
 	//playSound("sound/ClickSound.mp3", soundToggleMenuItem->getSelectedIndex());
 

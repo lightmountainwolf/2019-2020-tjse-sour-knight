@@ -30,6 +30,22 @@ void Actor::takeDamage(Actor* actor)
 	}
 }
 
+void Actor::takeDamage(Bullet* bullet)
+{
+	_HP -= bullet->getAttack();
+	if (_HP <= 0)
+	{
+		setHP(0);
+		setAlreadyDead(true);
+		setAttackRadius(0);
+	}
+	else
+	{
+		setAlreadyDead(false);
+	}
+}
+
+
 
 void Actor::releaseDebuff(Actor* actor)
 {
@@ -71,6 +87,7 @@ Actor* Actor::create(const std::string& fliename)
 void Actor::initData()//用空指针的形式初始化
 {
 	setHP(0);
+	setMaxHP(0);
 	setAttack(0);
 	setAlreadyDead(true);
 	setAttackRadius(0);

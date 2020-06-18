@@ -16,9 +16,14 @@ class Knight :public Hero
 
 public:
 	virtual bool init(const std::string& filename,Weapon* weapon);
+
 	virtual bool init(const std::string& filename, Knight* knight);
+
 	static Knight* create(const std::string& filename,Weapon* weapon);
+
 	static Knight* create(const std::string& filename, Knight* kt);
+
+	
      
 	
 };

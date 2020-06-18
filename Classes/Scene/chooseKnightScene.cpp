@@ -57,8 +57,9 @@ void chooseKnightScene::goMenu(Ref *pSender)
 	stage->removeChildByTag(TAG_OF_KNIGHT);
 // /
 	//添加人物与武器
-	auto weapon = Weapon::create("Weapons/weaponGun.png", 3, 1, REMOTE, NORMAL);
+	auto weapon = Weapon::create("Weapons/weaponGun.png", 3, 1, HERO_REMOTE, NORMAL);
 	auto knight = Knight::create("Heroes/knight1.1.png", weapon);
+	log("%d", knight->getAlreadyDead());
 	knight->setPosition(Vec2(640, 480));
 	knight->setTag(TAG_OF_KNIGHT);
 	log("%f", knight->getPosition().x);
@@ -70,12 +71,14 @@ void chooseKnightScene::goMenu(Ref *pSender)
 	///设置碰撞性质
 	auto heroBody = PhysicsBody::createBox(knight->getContentSize());
 	heroBody->setCategoryBitmask(MY_HERO_1);
-	heroBody->setCollisionBitmask(MY_HERO_2);
+	heroBody->setCollisionBitmask(0);
+	heroBody->setContactTestBitmask(MY_HERO_2);
 	knight->setPhysicsBody(heroBody);
 
 	auto weaponBody = PhysicsBody::createBox(weapon->getContentSize());
 	weaponBody->setCategoryBitmask(WEAPON_1);
-	weaponBody->setCollisionBitmask(WEAPON_2);
+	weaponBody->setCollisionBitmask(0);
+	weaponBody->setContactTestBitmask(WEAPON_2);
 	weapon->setPhysicsBody(weaponBody);
 
 	

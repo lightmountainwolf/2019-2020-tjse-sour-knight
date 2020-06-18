@@ -4,7 +4,8 @@ bool Creep::init(const std::string& filename,
 	const EDebuffType debufftype,
 	const EAttackMode attackmode,
 	const int HP,
-	const int attack)
+	const int attack,
+	bool active)
 {
 	if (!Sprite::initWithFile(filename))
 		return false;
@@ -16,9 +17,9 @@ bool Creep::init(const std::string& filename,
 		setAlreadyDead(false);//没有死
 		setReleaseDebuff(debufftype);//敌人会对己方造成的Debuff
 		setAttackRadius(attackmode);
+		this->active = active;
 		return true;
 	}
-	//this->scheduleUpdate();
  }
 
 
@@ -27,10 +28,11 @@ Creep* Creep::create(const std::string& filename,
 	const EDebuffType debufftype,
 	const EAttackMode attackmode,
 	const int HP,
-	const int attack)
+	const int attack,
+	bool active)
 {
 	Creep* creep = new Creep();
-	if (creep && creep->init(filename, debufftype, attackmode, HP, attack))
+	if (creep && creep->init(filename, debufftype, attackmode, HP, attack,active))
 	{
 		creep->autorelease();
 		return creep;
@@ -42,14 +44,4 @@ Creep* Creep::create(const std::string& filename,
 	}
  }
 
-//随机移动
-/*void Creep::update(float delta)
-{
-	Vec2 p = this->getPosition();
-	/// ///////////////
-	float tempAngle = CCRANDOM_0_1() * 2 * PI;
-	float x = 250 * cos(tempAngle);
-	float y = 250 * sin(tempAngle);
-	auto move = MoveBy::create(20.0f, Vec2(x, y));
-	this->runAction(move);
-}*/
+

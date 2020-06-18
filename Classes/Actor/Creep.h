@@ -16,14 +16,15 @@ public:
 		const EDebuffType debufftype,
 		const EAttackMode attackmode,
 		const int HP,
-		const int attack);
+		const int attack,
+		bool active);
+		bool active;//active代表是否活跃
 	static Creep* create(const std::string &filename,
 		                 const EDebuffType debufftype,
 		                 const EAttackMode attackmode,
 		                 const int HP,
-		                 const int attack);
-	//void randomMove();
-	//void update(float delta);
+		                 const int attack,
+						 bool active);
 };
 
 

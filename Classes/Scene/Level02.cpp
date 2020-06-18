@@ -1,14 +1,14 @@
-#include "Scene/Level01.h"
 #include "Scene/Level02.h"
 
-Scene* Level01::createScene()
+
+Scene* Level02::createScene()
 {
 	auto scene = Scene::createWithPhysics();
-	scene->getPhysicsWorld()->setGravity(Vec2(0.0f, 0.0f));//å–æ¶ˆé‡åŠ›åœº
+	scene->getPhysicsWorld()->setGravity(Vec2(0.0f, 0.0f));//È¡ÏûÖØÁ¦³¡
 	scene->setTag(TAG_OF_FIRST_STAGE_SCENE);
 	auto layer = Level01::create();
 	scene->addChild(layer, 0);
-	// ////////////////////////////è®¾ç½®æš‚åœæŒ‰é’®////////////////////////////////////////////
+	// ////////////////////////////ÉèÖÃÔİÍ£°´Å¥////////////////////////////////////////////
 	auto pauseMenuItem = MenuItemImage::create(
 		"Buttons/buttonPause.png", "Buttons/buttonPauseClicked.png", CC_CALLBACK_1(Level01::menuPauseCallback, layer));
 	pauseMenuItem->setPosition(Vec2(1200, 900));
@@ -27,12 +27,12 @@ Scene* Level01::createScene()
 
 static void problemLoading(const char* filename)
 {
-    printf("Error while loading: %s\n", filename);
-    printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in HelloWorldScene.cpp\n");
+	printf("Error while loading: %s\n", filename);
+	printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in HelloWorldScene.cpp\n");
 }
 
 
-bool Level01::init()
+bool Level02::init()
 {
 
 	if (!Layer::init())
@@ -40,17 +40,17 @@ bool Level01::init()
 		return false;
 
 	}
-////////////////////////////ä»¥ä¸‹ä¸ºLavel01ç±»æˆå‘˜å˜é‡åˆå§‹åŒ–/////////////////////////////////
+	////////////////////////////ÒÔÏÂÎªLavel01Àà³ÉÔ±±äÁ¿³õÊ¼»¯/////////////////////////////////
 
 	this->setKnightBeenSelected(false);
 	this->setKnight(nullptr);
 	this->setWeapon(nullptr);
 	this->setBullet(nullptr);
 	this->setInAttackRange(false);
-// //////////
-	//this->setBeenAttacked(false);
+	// //////////
+		//this->setBeenAttacked(false);
 
-////////////////////////////ä»¥ä¸‹ä¸ºå®šä¹‰ç‰©ç†ä¸–ç•Œ(å¼•æ“)///////////////////////////////////////////////
+	////////////////////////////ÒÔÏÂÎª¶¨ÒåÎïÀíÊÀ½ç(ÒıÇæ)///////////////////////////////////////////////
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Point origin = Director::getInstance()->getVisibleOrigin();
 	auto body = PhysicsBody::createEdgeBox(visibleSize, PHYSICSBODY_MATERIAL_DEFAULT, 5.0f);
@@ -60,59 +60,47 @@ bool Level01::init()
 	this->addChild(edgeNode);
 	setTouchEnabled(true);
 	setTouchMode(Touch::DispatchMode::ONE_BY_ONE);
-	///////////////////////////ä»¥ä¸‹ä¸ºè®¾ç½®åœ°å›¾å±æ€§/////////////////////////
+	///////////////////////////ÒÔÏÂÎªÉèÖÃµØÍ¼ÊôĞÔ/////////////////////////
 
-	map = TMXTiledMap::create("Backgrounds/forM.tmx");	//åœ°å›¾ï¼
+	map = TMXTiledMap::create("Backgrounds/theM.tmx");	//µØÍ¼£¡
 
 	map->setScale(2);
 
-	addChild(map,0);											
+	addChild(map, 0);
 
 
-	TMXObjectGroup* group = map->getObjectGroup("obj");					
+	TMXObjectGroup* group = map->getObjectGroup("obj");
 
-	ValueMap spawnPoint = group->getObject("player");								
+	ValueMap spawnPoint = group->getObject("player");
 
-	float x = spawnPoint["x"].asFloat();										
+	float x = spawnPoint["x"].asFloat();
 
-	float y = spawnPoint["y"].asFloat();	
-
-	//æ’å…¥ä¼ é€é—¨
-	ValueMap doorPoint = group->getObject("transfer");
-
-	float xDoor = 2*doorPoint["x"].asFloat();
-
-	float yDoor = 2*doorPoint["y"].asFloat();
-
-	auto door = setDoor(xDoor, yDoor, 200);
-	door->setTag(TAG_OG_SAFEMAP_DOOR);
-	this->addChild(door);
-	door->setVisible(false);
+	float y = spawnPoint["y"].asFloat();
 
 	collidable = map->getLayer("collidable");
 
 	collidable->setVisible(false);
 
 	this->setTag(TAG_OF_LEVEL_01);
-///////////////////////////////////////////////////ä»¥ä¸‹ä¸ºå°æ€ªçš„è®¾ç½®
-	//ç”Ÿæˆå°æ€ª
-	
+	///////////////////////////////////////////////////ÒÔÏÂÎªĞ¡¹ÖµÄÉèÖÃ
+		//Éú³ÉĞ¡¹Ö
+
 	char monsters[5][4] = { "m1","m2" ,"m3" ,"m4" ,"m5" };
 
-	char monstersGroup2[5][4] = { "m6","m7" ,"m8" ,"m9" ,"m10" };
+	//char monstersGroup2[5][4] = { "m6","m7" ,"m8" ,"m9" ,"m10" };
 
-	char monstersGroup1[5][4] = { "m11","m12" ,"m13" ,"m14" ,"m15" };
+	//char monstersGroup1[5][4] = { "m11","m12" ,"m13" ,"m14" ,"m15" };
 
 	createMonster(monsters, "Creeps/monster3.png", 0);
 
-	createMonster(monstersGroup2, "Creeps/monster2.png", 5);
-	
-	createMonster(monstersGroup1, "Creeps/monster1.png", 10);
+	//createMonster(monstersGroup2, "Creeps/monster2.png", 5);
 
-	createMonster(monsters, "Creeps/monster2.png", 15);
+	//createMonster(monstersGroup1, "Creeps/monster1.png", 10);
 
-	createMonster(monstersGroup2, "Creeps/monster1.png", 20);
-	
+	//createMonster(monsters, "Creeps/monster2.png", 15);
+
+	//createMonster(monstersGroup2, "Creeps/monster1.png", 20);
+
 
 	for (int i = 0; i < 15; i++)
 	{
@@ -124,12 +112,11 @@ bool Level01::init()
 		littleMapClear[j] = 0;
 		littleMapWave[j] = 0;
 	}
-	deadCreeps = 0;
-	allClear = false;
-// ////////////////////////////////////////////////////////////////////
-	this->schedule(schedule_selector(Level01::enemyAttackUpdate), 1.0f, kRepeatForever, 0);//æ•Œäººçš„æ”»å‡»
-	this->schedule(schedule_selector(Level01::enemyMoveUpdate), 1, -1, 2);//æ•Œäººçš„ç§»åŠ¨
-	this->schedule(schedule_selector(Level01::armorRecoverUpdate), 2.0f, kRepeatForever, 0);//æŠ¤ç”²çš„æ¢å¤
+
+	// ////////////////////////////////////////////////////////////////////
+	this->schedule(schedule_selector(Level01::enemyAttackUpdate), 1.0f, kRepeatForever, 0);//µĞÈËµÄ¹¥»÷
+	this->schedule(schedule_selector(Level01::enemyMoveUpdate), 1, -1, 2);//µĞÈËµÄÒÆ¶¯
+	this->schedule(schedule_selector(Level01::armorRecoverUpdate), 2.0f, kRepeatForever, 0);//»¤¼×µÄ»Ö¸´
 	this->schedule(schedule_selector(Level01::heroDieUpdate), 3.0f, kRepeatForever, 2.0f);
 	this->scheduleUpdate();
 
@@ -137,7 +124,7 @@ bool Level01::init()
 
 }
 
-void Level01::createMonster(char arr[5][4], const std::string& location, int num)
+void Level02::createMonster(char arr[5][4], const std::string& location, int num)
 {
 	int tagArr[5] = { 55 + num,56 + num,57 + num,58 + num,59 + num };
 	for (int i = 0; i < 5; i++)
@@ -151,11 +138,11 @@ void Level01::createMonster(char arr[5][4], const std::string& location, int num
 		float y = 2 * mPoint["y"].asFloat();
 
 		Creep* monsterTemp;
-		if(num/5==0)
-		monsterTemp = Creep::create(location, NORMAL, MELEE, CREEP_HP_1, MONSTER_ATTACK_LOW,true);
-		else if(num/5==1)
-		monsterTemp = Creep::create(location, NORMAL, ENEMY_REMOTE, CREEP_HP_2, MONSTER_ATTACK_LOW, true);
-		else if(num/5==2)
+		if (num / 5 == 0)
+			monsterTemp = Creep::create(location, NORMAL, ENEMY_REMOTE, CREEP_HP_1, MONSTER_ATTACK_LOW, true);
+		else if (num / 5 == 1)
+			monsterTemp = Creep::create(location, NORMAL, ENEMY_REMOTE, CREEP_HP_2, MONSTER_ATTACK_LOW, true);
+		else if (num / 5 == 2)
 			monsterTemp = Creep::create(location, NORMAL, ENEMY_REMOTE, CREEP_HP_2, MONSTER_ATTACK_LOW, true);
 		else if (num / 5 == 3)
 			monsterTemp = Creep::create(location, NORMAL, ENEMY_REMOTE, CREEP_HP_2, MONSTER_ATTACK_LOW, false);
@@ -164,17 +151,15 @@ void Level01::createMonster(char arr[5][4], const std::string& location, int num
 
 
 		auto body = PhysicsBody::createBox(monsterTemp->getContentSize());
-		
-			body->setCategoryBitmask(ENEMY_1);
-			body->setCollisionBitmask(0);
-			body->setContactTestBitmask(ENEMY_2);
-		
+		body->setCategoryBitmask(ENEMY_1);
+		body->setCollisionBitmask(0);
+		body->setContactTestBitmask(ENEMY_2);
 		monsterTemp->setPhysicsBody(body);
-		
+
 
 		monsterTemp->setPosition(x, y);
 
-		CCLOG("%f %f",x,y);
+		CCLOG("%f %f", x, y);
 
 		monsterTemp->setTag(tagArr[i]);
 		this->addChild(monsterTemp);
@@ -182,16 +167,16 @@ void Level01::createMonster(char arr[5][4], const std::string& location, int num
 		if (monsterTemp->active == false)
 		{
 			monsterTemp->setVisible(false);
-			
+
 		}
-		
+
 
 		creepsVec.pushBack(monsterTemp);
 	}
 }
 
 
-void Level01::creepDie(Creep* creep)
+void Level02::creepDie(Creep* creep)
 {
 
 
@@ -202,7 +187,6 @@ void Level01::creepDie(Creep* creep)
 		creep->initWithFile("Creeps/monster3Dead.png");
 		creepDieArr[tag - 55] = true;
 		littleMapClear[0]++;
-		deadCreeps++;
 	}
 
 	else if ((tag >= TAG_OF_MONSTER_1 + 5) && (tag <= TAG_OF_MONSTER_5 + 5))
@@ -210,16 +194,13 @@ void Level01::creepDie(Creep* creep)
 		creep->initWithFile("Creeps/monster2Dead.png");
 		creepDieArr[tag - 55] = true;
 		littleMapClear[1]++;
-		deadCreeps++;
-		
 	}
-		
+
 	else if ((tag >= TAG_OF_MONSTER_1 + 10) && (tag <= TAG_OF_MONSTER_5 + 10))
 	{
 		creep->initWithFile("Creeps/monster1Dead.png");
 		creepDieArr[tag - 55] = true;
 		littleMapClear[2]++;
-		deadCreeps++;
 	}
 
 	else if ((tag >= TAG_OF_MONSTER_1 + 15) && (tag <= TAG_OF_MONSTER_5 + 15))
@@ -227,7 +208,6 @@ void Level01::creepDie(Creep* creep)
 		creep->initWithFile("Creeps/monster2Dead.png");
 		creepDieArr[tag - 55] = true;
 		littleMapClear[0]++;
-		deadCreeps++;
 	}
 
 	else if ((tag >= TAG_OF_MONSTER_1 + 20) && (tag <= TAG_OF_MONSTER_5 + 20))
@@ -235,43 +215,36 @@ void Level01::creepDie(Creep* creep)
 		creep->initWithFile("Creeps/monster1Dead.png");
 		creepDieArr[tag - 55] = true;
 		littleMapClear[1]++;
-		deadCreeps++;
 	}
-		
-	for (int i = 0; i < 2; i++)
+
+	for (int i = 0; i < 3; i++)
 	{
 		if (littleMapClear[i] >= 5)
 		{
-			for (int j = 15 + i * 5; j < 20 + i * 5; j++)
-			{
-				Creep* monster = creepsVec.at(j);
-				monster->active = true;
-				monster->setVisible(true);
-
-			}
+			littleMapClear[i] = 0;
 			if (littleMapWave[i] == 0)
+			{
+
+				for (int j = 15 + i * 5; j < 20 + i * 5; j++)
 				{
-				littleMapWave[i]++;
+					Creep* monster = creepsVec.at(j);
+					monster->active = true;
+					monster->setVisible(true);
+
 				}
-			
+			}
+			littleMapWave[i]++;
 		}
 	}
-	
-	if (deadCreeps >= 25)
-	{
-		allClear = true;
-		auto door=this->getChildByTag(TAG_OG_SAFEMAP_DOOR);
-		door->setVisible(true);
-	}
-	
+
 }
 
 
-void Level01::onEnter()//æ³¨å†Œç›‘å¬å™¨ï¼Œè®¾ç½®éŸ³ä¹
+void Level02::onEnter()//×¢²á¼àÌıÆ÷£¬ÉèÖÃÒôÀÖ
 {
 	Layer::onEnter();
-	
-	/////////////////////////////ä»¥ä¸‹ä¸ºè§’è‰²ç§»åŠ¨ç›‘å¬å™¨///////////////////////////////////
+
+	/////////////////////////////ÒÔÏÂÎª½ÇÉ«ÒÆ¶¯¼àÌıÆ÷///////////////////////////////////
 	auto knightMoveListener = EventListenerKeyboard::create();
 
 	knightMoveListener->onKeyPressed = [=](EventKeyboard::KeyCode code, Event* e)
@@ -285,32 +258,32 @@ void Level01::onEnter()//æ³¨å†Œç›‘å¬å™¨ï¼Œè®¾ç½®éŸ³ä¹
 	};
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(knightMoveListener, this);
 
-	/////////////////////////////ä»¥ä¸‹ä¸ºç¢°æ’ç›‘å¬å™¨/////////////////////////////////////////
+	/////////////////////////////ÒÔÏÂÎªÅö×²¼àÌıÆ÷/////////////////////////////////////////
 	auto monsterListener = EventListenerPhysicsContact::create();
 	monsterListener->onContactBegin = [&](PhysicsContact& contact)
 	{
 		auto bullet = static_cast<Bullet*>(contact.getShapeA()->getBody()->getNode());
 		auto monster = static_cast<Creep*>(contact.getShapeB()->getBody()->getNode());
-		if (bullet && bullet->getTag() == TAG_OF_BULLET_01 && monster &&( monster->getTag()>=TAG_OF_MONSTER_1)&&(monster->getTag()<= MAX_TAG_OF_MONSTER))
+		if (bullet && bullet->getTag() == TAG_OF_BULLET_01 && monster && (monster->getTag() >= TAG_OF_MONSTER_1) && (monster->getTag() <= MAX_TAG_OF_MONSTER))
 		{
 			if (!monster->getAlreadyDead())
 			{
 				monster->setColor(Color3B::RED);
 				monster->takeDamage(bullet);
 				bullet->removeFromParent();
-				
+
 				if (monster->getAlreadyDead())
 				{
 					creepDie(monster);
 				}
 			}
 		}
-		
+
 		return true;
 	};
 	monsterListener->onContactPreSolve = [](PhysicsContact& contact, PhysicsContactPreSolve& solve)
 	{
-		
+
 		return true;
 	};
 	monsterListener->onContactPostSolve = [](PhysicsContact& contact, const PhysicsContactPostSolve& solve)
@@ -320,12 +293,12 @@ void Level01::onEnter()//æ³¨å†Œç›‘å¬å™¨ï¼Œè®¾ç½®éŸ³ä¹
 	monsterListener->onContactSeparate = [&](PhysicsContact& contact)
 	{
 		auto monster = (Creep*)contact.getShapeB()->getBody()->getNode();
-		if(monster&&(monster->getTag()>=TAG_OF_MONSTER_1)&&(monster->getTag()<=MAX_TAG_OF_MONSTER))
-		monster->setColor(Color3B::WHITE);
+		if (monster && (monster->getTag() >= TAG_OF_MONSTER_1) && (monster->getTag() <= MAX_TAG_OF_MONSTER))
+			monster->setColor(Color3B::WHITE);
 	};
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(monsterListener, 1);
 
-// ///////////////////////////////////////////////////////////ç¬¬äºŒä¸ªç¢°æ’ç›‘å¬å™¨
+	// ///////////////////////////////////////////////////////////µÚ¶ş¸öÅö×²¼àÌıÆ÷
 
 	auto heroListener = EventListenerPhysicsContact::create();
 	heroListener->onContactBegin = [&](PhysicsContact& contact)
@@ -337,16 +310,16 @@ void Level01::onEnter()//æ³¨å†Œç›‘å¬å™¨ï¼Œè®¾ç½®éŸ³ä¹
 			if (!hero->getAlreadyDead())
 			{
 				hero->setColor(Color3B::RED);
-;
+				;
 				hero->takeDamage(bullet);
 				bullet->removeFromParent();
-				
+
 				if (hero->getAlreadyDead())
-				{		
+				{
 					hero->initWithFile("Heroes/knight1.1Dead.png");
 					hero->stopAllActions();
 				}
-				
+
 			}
 		}
 
@@ -354,12 +327,12 @@ void Level01::onEnter()//æ³¨å†Œç›‘å¬å™¨ï¼Œè®¾ç½®éŸ³ä¹
 	};
 	heroListener->onContactPreSolve = [&](PhysicsContact& contact, PhysicsContactPreSolve& solve)
 	{
-		
+
 		return true;
 	};
 	heroListener->onContactPostSolve = [&](PhysicsContact& contact, const PhysicsContactPostSolve& solve)
 	{
-		
+
 	};
 
 	heroListener->onContactSeparate = [&](PhysicsContact& contact)
@@ -367,49 +340,49 @@ void Level01::onEnter()//æ³¨å†Œç›‘å¬å™¨ï¼Œè®¾ç½®éŸ³ä¹
 		auto hero = (Hero*)contact.getShapeB()->getBody()->getNode();
 		if (this->getKnightBeenSelected())
 		{
-			if(hero&&(hero->getTag()==this->getKnight()->getTag()))
-			hero->setColor(Color3B::WHITE);
+			if (hero && (hero->getTag() == this->getKnight()->getTag()))
+				hero->setColor(Color3B::WHITE);
 		}
 	};
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(heroListener, 1);
 
-// //////////////////////////////////////////////////////////////////////////////////////////
+	// //////////////////////////////////////////////////////////////////////////////////////////
 	this->listenerVec.pushBack(knightMoveListener);
 	this->listenerVec.pushBack(monsterListener);
 	this->listenerVec.pushBack(heroListener);
-/// ///////////////////////////////////////////////////////////////////////
+	/// ///////////////////////////////////////////////////////////////////////
 	playMusic("sound/FightMapCaveBGM.mp3", true);
 }
 
-void Level01::onEnterTransitionDidFinish()
+void Level02::onEnterTransitionDidFinish()
 {
 	Layer::onEnterTransitionDidFinish();
-	
+
 }
 
-void Level01::onExitTransitionDidStart()
+void Level02::onExitTransitionDidStart()
 {
 	Layer::onExitTransitionDidStart();
-	
+
 }
 
-void Level01::onExit()//æ³¨é”€ç›‘å¬å™¨
+void Level02::onExit()//×¢Ïú¼àÌıÆ÷
 {
 	Layer::onExit();
-	for(auto listener:listenerVec)
-	Director::getInstance()->getEventDispatcher()->removeEventListener(listener);
-	
+	for (auto listener : listenerVec)
+		Director::getInstance()->getEventDispatcher()->removeEventListener(listener);
+
 }
 
-void Level01::cleanup()
+void Level02::cleanup()
 {
 	Layer::cleanup();
-	
+
 }
 
-void Level01::menuPauseCallback(cocos2d::Ref* pSender)//æš‚åœæŒ‰é’®çš„å›è°ƒ
+void Level02::menuPauseCallback(cocos2d::Ref* pSender)//ÔİÍ£°´Å¥µÄ»Øµ÷
 {
-	
+
 
 	auto scene = Pause::createScene();
 	Director::getInstance()->pushScene(scene);
@@ -417,25 +390,25 @@ void Level01::menuPauseCallback(cocos2d::Ref* pSender)//æš‚åœæŒ‰é’®çš„å›è°ƒ
 }
 
 
-bool Level01::onTouchBegan(Touch* touch, Event* event)//é¼ æ ‡ç‚¹å‡»ï¼Œéª‘å£«æ”»å‡»
+bool Level02::onTouchBegan(Touch* touch, Event* event)//Êó±êµã»÷£¬ÆïÊ¿¹¥»÷
 {
-	if (( this->getKnight()->getMP())&&(!this->getKnight()->getAlreadyDead()))
+	if ((this->getKnight()->getMP()) && (!this->getKnight()->getAlreadyDead()))
 	{
 		Vec2 p = this->getWeapon()->getPosition();
 		auto bullet = Bullet::create("Bullets/bullet1.png", 3, NORMAL);
 		bullet->setTag(TAG_OF_BULLET_01);
 		this->setBullet(bullet);
-		/// ///////////è®¾ç½®ç¢°æ’å±æ€§
+		/// ///////////ÉèÖÃÅö×²ÊôĞÔ
 		auto body = PhysicsBody::createBox(bullet->getContentSize());
 		body->setCategoryBitmask(MY_BULLET_1);//0010
 		body->setCollisionBitmask(0);
 		body->setContactTestBitmask(MY_BULLET_2);
-		
+
 		bullet->setPhysicsBody(body);
 		bullet->setPosition(p);
 		this->addChild(bullet);
 
-		//è§’è‰²çš„è‡ªåŠ¨åŠŸæ”¾æœº
+		//½ÇÉ«µÄ×Ô¶¯¹¦·Å»ú
 		if (!attackTawordsTarget(bullet))
 			attackRandomly(bullet);
 
@@ -444,14 +417,13 @@ bool Level01::onTouchBegan(Touch* touch, Event* event)//é¼ æ ‡ç‚¹å‡»ï¼Œéª‘å£«æ”»
 	return false;
 }
 
-void Level01::removeFromParent(Node* bullet)//åˆ é™¤å­å¼¹çš„å›è°ƒå‡½æ•°
+void Level02::removeFromParent(Node* bullet)//É¾³ı×Óµ¯µÄ»Øµ÷º¯Êı
 {
 	bullet->removeFromParent();
 }
 
-void Level01::update(float delta)
+void Level02::update(float delta)
 {
-	
 	log("%d", this->getKnightBeenSelected());
 	if (this->getKnightBeenSelected())
 	{
@@ -462,61 +434,9 @@ void Level01::update(float delta)
 			knightMove();
 		}
 	}
-	auto door = this->getChildByTag(TAG_OG_SAFEMAP_DOOR);
-	
-	if (door->getBoundingBox().containsPoint(this->getKnight()->getPosition())&&allClear)
-	{
-		auto scene = Level02::createScene();
-		////é¢„å¤„ç†
-		scene->removeChildByTag(TAG_OF_LEVEL_01);
-		//
-
-		auto stage = Level02::create();
-
-		auto knight = Knight::create("Heroes/knight1.1.png", this->getKnight());
-		auto weapon = Weapon::create("Weapons/weaponGun.png", this->getWeapon());
-
-		knight->setPosition(Vec2(640, 480));
-		weapon->setPosition(Vec2(640, 455));
-
-		knight->setTag(TAG_OF_KNIGHT);
-		weapon->setTag(TAG_OF_KNIGHT_INITIAL_WEAPON);
-		//stage->setTag(TAG_OF_LEVEL_01);
-
-		//è®¾ç½®ç¢°æ’æ€§è´¨
-		auto heroBody = PhysicsBody::createBox(knight->getContentSize());
-		heroBody->setCategoryBitmask(MY_HERO_1);
-		heroBody->setCollisionBitmask(0);
-		heroBody->setContactTestBitmask(MY_HERO_2);
-		knight->setPhysicsBody(heroBody);
-
-		auto weaponBody = PhysicsBody::createBox(weapon->getContentSize());
-		weaponBody->setCategoryBitmask(WEAPON_1);
-		weaponBody->setCollisionBitmask(0);
-		weaponBody->setContactTestBitmask(WEAPON_2);
-		weapon->setPhysicsBody(weaponBody);
-		////è§’è‰²çš„æ·»åŠ 
-		stage->addChild(knight);
-		stage->addChild(weapon);
-		stage->setKnight(knight);
-		stage->setWeapon(weapon);
-		if (this->getKnightBeenSelected())
-		{
-			stage->setKnightBeenSelected(true);
-		}
-		scene->addChild(stage, 0);
-
-		//////////åˆ›å»ºInformationBox
-		createInformationBox(stage, knight);
-
-
-
-		auto reScene = TransitionProgressOutIn::create(0.5f, scene);
-		Director::getInstance()->replaceScene(reScene);
-	}
 }
 
-void Level01::heroDieUpdate(float delta)
+void Level02::heroDieUpdate(float delta)
 {
 	if (this->getKnightBeenSelected() && this->getKnight()->getAlreadyDead())
 	{
@@ -526,7 +446,7 @@ void Level01::heroDieUpdate(float delta)
 	}
 }
 
-void Level01::enemyAttackUpdate(float delta)
+void Level02::enemyAttackUpdate(float delta)
 {
 	Vec2 hero;
 	if ((this->getKnightBeenSelected()) && (!this->getKnight()->getAlreadyDead()))
@@ -536,100 +456,71 @@ void Level01::enemyAttackUpdate(float delta)
 		{
 			if (!monster->getAlreadyDead() && monster->active == true)
 			{
-				if (monster->getAttackMode() == ENEMY_REMOTE)
+				Vec2 enemy = monster->getPosition();
+				if ((enemy.x >= hero.x - ENEMY_REMOTE) && (enemy.x <= hero.x + ENEMY_REMOTE) &&
+					(enemy.y >= hero.y - ENEMY_REMOTE) && (enemy.y <= hero.y + ENEMY_REMOTE))
 				{
-					Vec2 enemy = monster->getPosition();
-					if ((enemy.x >= hero.x - ENEMY_REMOTE) && (enemy.x <= hero.x + ENEMY_REMOTE) &&
-						(enemy.y >= hero.y - ENEMY_REMOTE) && (enemy.y <= hero.y + ENEMY_REMOTE))
-					{
-						this->setInAttackRange(true);
-						//this->setBeenAttacked(true);
-						auto enemyBullet = Bullet::create("Bullets/bullet1.png", 3, NORMAL);
-						enemyBullet->setTag(TAG_OF_BULLET_01);
+					this->setInAttackRange(true);
+					//this->setBeenAttacked(true);
+					auto enemyBullet = Bullet::create("Bullets/bullet1.png", 3, NORMAL);
+					enemyBullet->setTag(TAG_OF_BULLET_01);
 
-						auto Ebody = PhysicsBody::createBox(enemyBullet->getContentSize());
-						Ebody->setCategoryBitmask(ENEMY_BULLET_1);//0010
-						Ebody->setCollisionBitmask(0);
-						Ebody->setContactTestBitmask(ENEMY_BULLET_2);
-						enemyBullet->setPhysicsBody(Ebody);
+					auto Ebody = PhysicsBody::createBox(enemyBullet->getContentSize());
+					Ebody->setCategoryBitmask(ENEMY_BULLET_1);//0010
+					Ebody->setCollisionBitmask(0);
+					Ebody->setContactTestBitmask(ENEMY_BULLET_2);
+					enemyBullet->setPhysicsBody(Ebody);
 
 
-						enemyBullet->setPosition(enemy);
-						enemyBullet->runAction(Sequence::create(MoveTo::create(0.4f, hero), CallFunc::create(CC_CALLBACK_0(Sprite::removeFromParent, enemyBullet)), NULL));
+					enemyBullet->setPosition(enemy);
+					enemyBullet->runAction(Sequence::create(MoveTo::create(0.4f, hero), CallFunc::create(CC_CALLBACK_0(Sprite::removeFromParent, enemyBullet)), NULL));
 
-						//this->setBeenAttacked(false);
-						this->addChild(enemyBullet);
+					//this->setBeenAttacked(false);
+					this->addChild(enemyBullet);
 
-					}
-				}
-				else if (monster->getAttackMode() == MELEE)
-				{
-					Vec2 enemy = monster->getPosition();
-					if ((enemy.x >= hero.x - MELEE) && (enemy.x <= hero.x + MELEE) &&
-						(enemy.y >= hero.y - MELEE) && (enemy.y <= hero.y + MELEE))
-					{
-						this->setInAttackRange(true);
-						//this->setBeenAttacked(true);
-						auto enemyBullet = Bullet::create("Weapons/forkAttack1.png", 3, NORMAL);
-						enemyBullet->setTag(TAG_OF_BULLET_01);
-
-						auto Ebody = PhysicsBody::createBox(enemyBullet->getContentSize());
-						Ebody->setCategoryBitmask(ENEMY_BULLET_1);//0010
-						Ebody->setCollisionBitmask(0);
-						Ebody->setContactTestBitmask(ENEMY_BULLET_2);
-						enemyBullet->setPhysicsBody(Ebody);
-
-
-						enemyBullet->setPosition(enemy);
-						enemyBullet->runAction(Sequence::create(MoveTo::create(0.4f, hero), CallFunc::create(CC_CALLBACK_0(Sprite::removeFromParent, enemyBullet)), NULL));
-
-						//this->setBeenAttacked(false);
-						this->addChild(enemyBullet);
-						enemyBullet->setVisible(false);
-					}
 				}
 			}
 		}
 	}
 }
 
-void Level01::knightMove()//æ”¾ç½®åœ¨updateé‡Œçš„å‡½æ•°ï¼Œå®ç°éª‘å£«è§’è‰²çš„ç§»åŠ¨
+void Level02::knightMove()//·ÅÖÃÔÚupdateÀïµÄº¯Êı£¬ÊµÏÖÆïÊ¿½ÇÉ«µÄÒÆ¶¯
 {
 	Point playerPos = this->getKnight()->getPosition();
 
 	if (keys[EventKeyboard::KeyCode::KEY_D])
 	{
-		playerPos.x += map->getTileSize().width/4;
+		playerPos.x += map->getTileSize().width / 4;
 
 		this->getKnight()->runAction(FlipX::create(false));
 		this->getWeapon()->runAction(FlipX::create(false));
-		
+
 	}
 	if (keys[EventKeyboard::KeyCode::KEY_A])
 	{
-		playerPos.x -= map->getTileSize().width/4;
+		playerPos.x -= map->getTileSize().width / 4;
 
 		this->getKnight()->runAction(FlipX::create(true));
 		this->getWeapon()->runAction(FlipX::create(true));
-		
+
 	}
 	if (keys[EventKeyboard::KeyCode::KEY_S])
 	{
-		playerPos.y -= map->getTileSize().height/4;
-		
+		playerPos.y -= map->getTileSize().height / 4;
+
 	}
 	if (keys[EventKeyboard::KeyCode::KEY_W])
 	{
-		playerPos.y += map->getTileSize().height/4;
-		
+		playerPos.y += map->getTileSize().height / 4;
+
 	}
-	
+
 	this->setPlayerPosition(playerPos);
 	this->screenRoll(playerPos);
 
 }
 
-void Level01::attackRandomly(Bullet* bullet)//æ²¡æœ‰æ”»å‡»ç›®æ ‡æ—¶çš„éšæœºæ”»å‡»
+void Level02::attackRandomly(Bullet* bullet)//Ã»ÓĞ¹¥»÷Ä¿±êÊ±µÄËæ»ú¹¥»÷
 {
 	float tempAngle = CCRANDOM_0_1() * 2 * PI;
 	float x = 250 * cos(tempAngle);
@@ -639,9 +530,9 @@ void Level01::attackRandomly(Bullet* bullet)//æ²¡æœ‰æ”»å‡»ç›®æ ‡æ—¶çš„éšæœºæ”»å
 
 }
 
-bool Level01::attackTawordsTarget(Bullet* bullet)
+bool Level02::attackTawordsTarget(Bullet* bullet)
 {
-	bool tag=false;
+	bool tag = false;
 	if (this->getKnightBeenSelected())
 	{
 		Vec2 hero = this->getKnight()->getPosition();
@@ -661,19 +552,19 @@ bool Level01::attackTawordsTarget(Bullet* bullet)
 	}
 }
 
-void Level01::enemyMoveUpdate(float delta)
+void Level02::enemyMoveUpdate(float delta)
 {
 	creepMove();
 }
 
-void Level01::creepMove()
+void Level02::creepMove()
 {
 	int xx, yy, tileGid;
 	Point playerPos = this->getKnight()->getPosition();
 
 	for (const auto& sprite : this->creepsVec)
 	{
-		if (!sprite->getAlreadyDead()&&sprite->active==true)//å¦‚æœè¿™ä¸€ä¸ªå°æ€ªæ²¡æœ‰æ­»ï¼Œå°±ä¼šéšç€è‹±é›„ç§»åŠ¨
+		if (!sprite->getAlreadyDead() && sprite->active == true)//Èç¹ûÕâÒ»¸öĞ¡¹ÖÃ»ÓĞËÀ£¬¾Í»áËæ×ÅÓ¢ĞÛÒÆ¶¯
 		{
 			Point pos = sprite->getPosition();
 			if (!this->getKnight()->getAlreadyDead())
@@ -726,70 +617,70 @@ void Level01::creepMove()
 	}
 }
 
-void Level01::setPlayerPosition(Point position)
+void Level02::setPlayerPosition(Point position)
 {
-		//ä»åƒç´ ç‚¹åæ ‡è½¬åŒ–ä¸ºç“¦ç‰‡åæ ‡
-		Point tileCoord = this->transPoision(position);
+	//´ÓÏñËØµã×ø±ê×ª»¯ÎªÍßÆ¬×ø±ê
+	Point tileCoord = this->transPoision(position);
 
-			//è·å¾—ç“¦ç‰‡çš„GID
-		const int tileGid = collidable->getTileGIDAt(tileCoord);
+	//»ñµÃÍßÆ¬µÄGID
+	const int tileGid = collidable->getTileGIDAt(tileCoord);
 
-		if (tileGid > 0)
-		{
-			Value prop = map->getPropertiesForGID(tileGid);
+	if (tileGid > 0)
+	{
+		Value prop = map->getPropertiesForGID(tileGid);
 
-			ValueMap propValueMap = prop.asValueMap();
+		ValueMap propValueMap = prop.asValueMap();
 
-			std::string collision = propValueMap["Collidable"].asString();
+		std::string collision = propValueMap["Collidable"].asString();
 
-			if (collision == "true") { //ç¢°æ’æ£€æµ‹æˆåŠŸ									
+		if (collision == "true") { //Åö×²¼ì²â³É¹¦									
 
-				CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("empty.wav");
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("empty.wav");
 
-				return;
-
-			}
+			return;
 
 		}
-		this->getKnight()->setPosition(position);
-		 const Point pos = Point(position.x, position.y - 25);
-		this->getWeapon()->setPosition(pos);
+
+	}
+	this->getKnight()->setPosition(position);
+	const Point pos = Point(position.x, position.y - 25);
+	this->getWeapon()->setPosition(pos);
 }
 
 
-Point Level01::transPoision(Point pos)
+Point Level02::transPoision(Point pos)
 {
-	int x = 0.5*pos.x / map->getTileSize().width; 									
-	int y = ((map->getMapSize().height * map->getTileSize().height) - 0.5* pos.y) /
+	int x = 0.5 * pos.x / map->getTileSize().width;
+	int y = ((map->getMapSize().height * map->getTileSize().height) - 0.5 * pos.y) /
 
-	map->getTileSize().height; 		
+		map->getTileSize().height;
 
 	return Point(x, y);
 }
 
 
-void Level01::screenRoll(Point position)
+void Level02::screenRoll(Point position)
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-					
-	//å±å¹•ä¸­å¿ƒç‚¹
 
-	Point pointA = Point(visibleSize.width / 2, visibleSize.height / 2); 	
-	
+	//ÆÁÄ»ÖĞĞÄµã
+
+	Point pointA = Point(visibleSize.width / 2, visibleSize.height / 2);
+
 	Point pointB = position;
 	//position
 
-	//åœ°å›¾ç§»åŠ¨åç§»é‡
+	//µØÍ¼ÒÆ¶¯Æ«ÒÆÁ¿
 
-	Point offset = (pointA - pointB); 											
+	Point offset = (pointA - pointB);
 
-	this->setPosition(offset);												
+	this->setPosition(offset);
 
 }
 
 
-void Level01::armorRecoverUpdate(float delta)
+void Level02::armorRecoverUpdate(float delta)
 {
-	if (this->getKnightBeenSelected()&&(!this->getKnight()->getAlreadyDead()))
-          updateHeroArmor(this->getKnight());
+	if (this->getKnightBeenSelected() && (!this->getKnight()->getAlreadyDead()))
+		updateHeroArmor(this->getKnight());
 }

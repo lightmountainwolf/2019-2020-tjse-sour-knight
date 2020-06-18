@@ -23,5 +23,15 @@ USING_NS_CC;
  void updateInformationMP(Layer* layer, Hero* hero);
 //参数介绍 Layer* layer, 需要加在哪个场景中，hero:关于谁的信息
 
+//3.informationBox的更新（护甲的更新）
+ void updateInformationArmor(Layer* layer, Hero* hero);
+ //参数介绍 Layer* layer, 需要加在哪个场景中，hero:关于谁的信息
+
+//4.informationBox的更新（血量的更新）
+ void updateInformationHP(Layer* layer, Hero* hero);
+ //参数介绍 Layer* layer, 需要加在哪个场景中，hero:关于谁的信息
+
+ //5. 护甲的增加
+ void updateHeroArmor(Hero* hero);
 
 #endif // !_COMMON_FUNCTION

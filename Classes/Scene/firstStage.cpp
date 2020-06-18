@@ -69,13 +69,17 @@ bool firstStage::init()
 
 	map->setScale(2);
 
+
+	
+
 	//获取地图属性
 	addChild(map, 0);
-
+	
 	//放置传送门
+
 	auto door = setDoor(1600, 636, 200);
 	this->addChild(door);
-	
+
 	TMXObjectGroup* group = map->getObjectGroup("obj");
 
 	ValueMap spawnPoint = group->getObject("player");
@@ -123,8 +127,6 @@ void firstStage::onEnter()//注册监听器，设置音乐
 	EventDispatcher* eventDispatcher = Director::getInstance()->getEventDispatcher();
 	eventDispatcher->addEventListenerWithSceneGraphPriority(KnightSelectedListener, getChildByTag(TAG_OF_KNIGHT));
 
-
-
 	/////////////////////////////以下为角色移动监听器///////////////////////////////////
 	auto knightMoveListener = EventListenerKeyboard::create();
 
@@ -138,6 +140,11 @@ void firstStage::onEnter()//注册监听器，设置音乐
 		keys[keyCode] = false;
 	};
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(knightMoveListener, this);
+
+// ////////////////////////////////////////////////////////////////////////////
+	listenerVec.push_back(KnightSelectedListener);
+
+	listenerVec.push_back(knightMoveListener);
 
 		playMusic("sound/SafeMapBGM.mp3", true);	
 }
@@ -157,7 +164,8 @@ void firstStage::onExitTransitionDidStart()
 void firstStage::onExit()//注销监听器
 {
 	Layer::onExit();
-
+	for (auto listener : listenerVec)
+		Director::getInstance()->getEventDispatcher()->removeEventListener(listener);
 }
 
 void firstStage::cleanup()
@@ -243,7 +251,6 @@ void firstStage::update(float delta)
 	if (this->_knightBeenSelected)
 	{
 		knightMove();
-
 	}
 }
 
@@ -279,9 +286,57 @@ void firstStage::knightMove()//放置在update里的函数，实现骑士角色的移动
 	this->setPlayerPosition(playerPos);
 	this->screenRoll(playerPos);
 
+}
+
+void firstStage::nextScene()
+{
+	auto scene = Level01::createScene();
+	////预处理
+	scene->removeChildByTag(TAG_OF_LEVEL_01);
+	//
+
+	auto stage = Level01::create();
+
+	auto knight = Knight::create("Heroes/knight1.1.png", this->getKnight());
+	auto weapon = Weapon::create("Weapons/weaponGun.png", this->getWeapon());
+
+	knight->setPosition(Vec2(640, 480));
+	weapon->setPosition(Vec2(640, 455));
+
+	knight->setTag(TAG_OF_KNIGHT);
+	weapon->setTag(TAG_OF_KNIGHT_INITIAL_WEAPON);
+	//stage->setTag(TAG_OF_LEVEL_01);
+
+	//设置碰撞性质
+	auto heroBody = PhysicsBody::createBox(knight->getContentSize());
+	heroBody->setCategoryBitmask(MY_HERO_1);
+	heroBody->setCollisionBitmask(0);
+	heroBody->setContactTestBitmask(MY_HERO_2);
+	knight->setPhysicsBody(heroBody);
+
+	auto weaponBody = PhysicsBody::createBox(weapon->getContentSize());
+	weaponBody->setCategoryBitmask(WEAPON_1);
+	weaponBody->setCollisionBitmask(0);
+	weaponBody->setContactTestBitmask(WEAPON_2);
+	weapon->setPhysicsBody(weaponBody);
+	////角色的添加
+	stage->addChild(knight);
+	stage->addChild(weapon);
+	stage->setKnight(knight);
+	stage->setWeapon(weapon);
+	if (this->getKnightBeenSelected())
+	{
+		stage->setKnightBeenSelected(true);
+	}
+	scene->addChild(stage, 0);
+
+	//////////创建InformationBox
+	createInformationBox(stage, knight);
 
 
 
+	auto reScene = TransitionProgressOutIn::create(0.5f, scene);
+	Director::getInstance()->replaceScene(reScene);
 }
 
 void firstStage::setPlayerPosition(Point position)
@@ -319,53 +374,7 @@ void firstStage::setPlayerPosition(Point position)
 			}
 			if (pass == "true") 
 			{
-				auto scene = Level01::createScene();
-				////预处理
-				scene->removeChildByTag(TAG_OF_LEVEL_01);
-				//
-
-			  auto stage = Level01::create();
-
-			    auto knight=Knight::create("Heroes/knight1.1.png",this->getKnight());
-				auto weapon =Weapon::create("Weapons/weaponGun.png",this->getWeapon());
-
-				knight->setPosition(Vec2(640, 480));
-				weapon->setPosition(Vec2(640, 455));
-
-				knight->setTag(TAG_OF_KNIGHT);
-				weapon->setTag(TAG_OF_KNIGHT_INITIAL_WEAPON);
-				//stage->setTag(TAG_OF_LEVEL_01);
-
-				//设置碰撞性质
-				auto heroBody = PhysicsBody::createBox(knight->getContentSize());
-				heroBody->setCategoryBitmask(MY_HERO_1);
-				heroBody->setCollisionBitmask(MY_HERO_2);
-				knight->setPhysicsBody(heroBody);
-
-				auto weaponBody = PhysicsBody::createBox(weapon->getContentSize());
-				weaponBody->setCategoryBitmask(WEAPON_1);
-				weaponBody->setCollisionBitmask(WEAPON_2);
-				weapon->setPhysicsBody(weaponBody);
-				////角色的添加
-				stage->addChild(knight);
-				stage->addChild(weapon);
-		        stage->setKnight(knight);
-				stage->setWeapon(weapon);
-				if (this->getKnightBeenSelected())
-				{
-					stage->setKnightBeenSelected(true);
-				}
-				scene->addChild(stage, 0);
-
-				//////////创建InformationBox
-				createInformationBox(stage, knight);
-
-
-				
-				auto reScene = TransitionProgressOutIn::create(0.5f, scene);
-				Director::getInstance()->replaceScene(reScene);
-
-				//CCLOG("aaaaaaaaaaaaaaa");
+				nextScene();
 			}
 
 		}

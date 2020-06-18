@@ -4,25 +4,20 @@
 
 #include"cocos2d.h"
 
-//小怪tag
-#define MONSTER_1 55
-#define MONSTER_2 56
-#define MONSTER_3 57
-#define MONSTER_4 58
-#define MONSTER_5 59
 //数学相关
 #define PI 3.14159
 
 //物理引擎(用于碰撞检测)
-#define WEAPON_1 0x00
+
+#define WEAPON_1 0x00//远程武器通用掩码
 #define WEAPON_2 0x00
 #define MY_HERO_1 0x02
 #define MY_HERO_2 0x01
-#define ENEMY_1   0x01
-#define ENEMY_2   0x03
-#define MY_BULLET_1 0x04
+#define ENEMY_1   0x08
+#define ENEMY_2   0x04
+#define MY_BULLET_1 0x04  //英雄的远程武器子弹和近战武器
 #define MY_BULLET_2 0x08
-#define ENEMY_BULLET_1 0x01
+#define ENEMY_BULLET_1 0x01//敌人的远程武器子弹和近战武器
 #define ENEMY_BULLET_2 0x02
 
 
@@ -51,7 +46,9 @@
 enum EAttackMode
 {
 	MELEE=100,//近战
-	REMOTE=300//远程攻击
+	ENEMY_REMOTE=300,//远程攻击
+	HERO_REMOTE=500 //英雄-远程攻击范围
+	
 };
 
 
@@ -75,7 +72,16 @@ enum EAttackMode
 //人物部分（英雄角色与敌人） 50~200
 #define TAG_OF_KNIGHT 50
 
-#define TAG_OF_ENEMY_1 60
+//小怪tag
+#define TAG_OF_MONSTER_1 55
+#define TAG_OF_MONSTER_2 56
+#define TAG_OF_MONSTER_3 57
+#define TAG_OF_MONSTER_4 58
+#define TAG_OF_MONSTER_5 59
+
+//目前排到了69
+#define MAX_TAG_OF_MONSTER 84
+
 
 //信息栏部分（HP，MP，护甲）201~250
 #define TAG_OF_LABEL_HP 201
@@ -97,7 +103,8 @@ enum EAttackMode
 
 #define TAG_OF_KNIGHT_INITIAL_WEAPON 300
 
-
+//子弹部分 350~400
+#define TAG_OF_BULLET_01 350
 
 
 
